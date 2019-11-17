@@ -1,0 +1,190 @@
+import java.util.*;
+import java.util.Scanner;
+import Collection.LBList;
+import Collection.ListInterface;
+import chapter2.ArrayBoundedStack;
+import chapter2.StackInterface;
+import chapter4.ArrayBoundedQueue;
+import chapter4.QueueInterface;
+import chapter7.BinarySearchTree;
+import chapter8.HMap;
+import chapter8.MapInterface;
+import priorityQueue.HeapPriQ;
+import priorityQueue.PriQueueInterface;
+/*
+ * This program is our final exam and uses 6 ADT's.
+ */
+/**
+ *@author Olivia Watson-Bonthu
+ *@Date 5/08/2019
+ *@Note Kathleen Kelly
+ *@Note Final Exam
+ */
+public class FinalExam 
+{
+	public static void main(String[] args)
+	{
+		//Create keyboard entry
+		Scanner scan = new Scanner(System.in);
+		
+		String courseName;  //String to hold course names entered by user
+		//String reveal;  //String variable to hold top element of stack	
+		final int MAX = 5;  //Max amount of courses
+		//Create a link based list
+		ListInterface<String> courses = new LBList<String>();
+		//Create Priority Queue
+		PriQueueInterface<String> courseHeap = new HeapPriQ<String>(MAX);
+		
+		//Ask user to enter 5 courses
+		System.out.println("Enter 5 courses you are taking here at Montco\n");
+	
+		//Add courses in to link based list using for loop
+		for(int count = 1; count <= MAX; count++) 
+		{
+			System.out.println("Enter course " + count + " here:");
+			System.out.println(); //newline space for readability to user
+			courseName = scan.nextLine();
+			courses.add(courseName.toUpperCase()); //Add course to linked list courses
+			courseHeap.enqueue(courseName.toUpperCase()); //Enqueue to priority queue
+		}
+		System.out.println();//newLine for readability
+	
+		//Print contents of linked list courses
+		System.out.println("The courses you entered are :\n");
+		for (String x: courses)
+			System.out.println(x);
+	
+		//Print PriQ maximum heap
+		System.out.println(); //newline for readability
+		System.out.println("(Maximum Heap)");
+		System.out.println(courseHeap);
+		
+		//Create Array to hold list for when needed
+		String[] myStringArray = new String[MAX];
+		
+		
+		//Create stack & push courseHeap course names onto a stack.
+		StackInterface<String> courseStack = new ArrayBoundedStack<String>(MAX);  
+			for(int index = 0; index < MAX; index++) 
+			{
+				courseName = courseHeap.dequeue();  //Use courseName to save element from courseHeap PriorityQueue when we dequeue
+				courseStack.push(courseName.toUpperCase()); //push element from linked list onto stack
+				myStringArray[index] = courseName.toUpperCase();//save to array 
+			}
+	
+		//Print contents of the stack, top and pop!
+		System.out.println("Printing elements off the stack");
+		System.out.println("(reverse Max Heap)\n");
+			for(int index = 0; index < MAX; index++) 
+			{
+					courseName = courseStack.top(); //peek at the top of stack and save to courseName variable
+					courseStack.pop();  //pop top element off of stack
+					System.out.println(courseName); //print the element saved in variable
+			}
+			
+		//Print list to user
+		System.out.println("\nPlease take a look at your course list\n");
+			for(int i = 0; i < MAX; i++)
+				System.out.println(myStringArray[i]);
+	
+		//Create ArrayBoundedQueue to hold the future course list
+		QueueInterface<String> myCourseQueue = new ArrayBoundedQueue<String>(MAX);
+		
+		//Ask user to identify order in which they took the courses 
+		System.out.println("\nPlease indicate in order, the classes you took.\n" +
+							"Starting with the first class, please type it in.\n");
+		
+		//Use for loop to capture courses indicated
+		for(int index = 0; index < MAX; index++) 
+		{
+			System.out.println("Class "+ (index +1) + ":");
+			courseName = scan.nextLine().toUpperCase();
+			myCourseQueue.enqueue(courseName.toUpperCase());
+		}
+		
+		//Put courses into a BinarySearchTree structure so that we can search quickly for
+		BinarySearchTree<String> courseBST = new BinarySearchTree<String>();
+				
+		//Print the Queue
+		String courseQN; //variable to hold queue names to put into BinarySearchTree
+		System.out.println("\nThe queue course order is\n");
+		//While loop to print the queue
+		while(!myCourseQueue.isEmpty())
+		{
+			courseQN = myCourseQueue.dequeue();
+			courseBST.add(courseQN);
+			System.out.println(courseQN);
+		}	
+		System.out.println(); //newLine for readability
+		
+		//Ask user which course they would like to search
+		System.out.println("Which course would you like to search for using the BinarySearchTree?\n"+
+							"Please enter it here:\n or type X to stop.");
+		courseName = scan.nextLine().toUpperCase();
+	
+		//Use while loop to test that X was not entered to stop the search
+		while(!courseName.equalsIgnoreCase("X"))
+		{
+			//Use contains method to search BST for course and tell user if you found it or not.
+			if(courseBST.contains(courseName.toUpperCase()))
+			{
+				System.out.println("This binary search discovered that \nthis course " +
+									courseName.toUpperCase() + " exists!");
+				System.out.println("IF you would like to enter another course, please do so.");
+				System.out.println("If not, please type X");
+				courseName = scan.nextLine().toUpperCase();
+			}
+			else if(!courseBST.contains(courseName.toUpperCase())) 
+			{
+				System.out.println("This " + courseName + " does not exist, sorry!");
+				System.out.println("Would you like to search for another course?\n" +
+									"If yes, please type in your course.\n" +
+									"If you are finished, please type X\n");
+				courseName = scan.nextLine();
+			}
+		}//while loop close brackets
+		
+		System.out.println("Thank  you for trying out BST.\n");
+	
+		//Step 6: Take the list created in step 1 and 2, put into HashMap structure, 
+		MapInterface<String, String> myHashMap = new HMap<String, String>(MAX, MAX);
+		            
+		//Transferring list to myHashMap              
+		for(int index = 0; index < MAX; index++)																								
+		{
+			courseName = myStringArray[index];
+			myHashMap.put("Course", courseName);
+		}
+		//Ask user to type in course name that they want to search for, 
+		System.out.println("Which course would you like to search for using the HashMap structure?\n"+
+							"Please enter it here:\n or type X to stop.");
+		courseName = scan.nextLine().toUpperCase();
+	
+		//Check what user entered and if course is found or not	
+		while(!courseName.equalsIgnoreCase("X"))
+		{
+				if(!myHashMap.contains(courseName))
+				{
+					System.out.println("Sorry the course "+ courseName + " was not found!");
+				}
+				else if(myHashMap.contains(courseName))
+				{
+					System.out.println("This course " + courseName + " was found!");
+				}//Closing bracket for else
+			
+				System.out.println("Would you like to search for another course?\n" +
+									"If yes, please type in your course.\n" +
+									"If you are finished, please type X\n");
+			
+			courseName = scan.nextLine().toUpperCase(); 
+		}//Closing bracket for while loop			
+			
+	System.out.println("Thank you for trying out this program!");
+		
+	//Close scanner
+	scan.close();
+  }
+}
+
+
+
